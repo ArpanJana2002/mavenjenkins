@@ -8,33 +8,24 @@ import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
-public class UITest 
-{
+@Test
+@Parameters("browser")
+public void startBrowser(String browserName) {
+    WebDriver driver;
+    if (browserName != null && browserName.contains("Chrome")) {
+        ChromeOptions opt = new ChromeOptions();
+        opt.addArguments("--headless");
+        opt.addArguments("--no-sandbox");
+        opt.addArguments("--disable-dev-shm-usage");
+        driver = new ChromeDriver(opt);
+    } else if (browserName != null && browserName.contains("Edge")) {
+        driver = new EdgeDriver();
+    } else {
+        throw new IllegalArgumentException("Unsupported browser: " + browserName);
+    }
 
-	@Parameters("Browser")
-	@Test
-	public void startBrowser(String browserName)
-	{
-		System.out.println("Parameter value is "+browserName);
-		WebDriver driver=null;
-		
-		if(browserName.contains("Chrome"))
-		{
-			ChromeOptions opt=new ChromeOptions();
-			opt.addArguments("--headless");
-			opt.addArguments("--no-sandbox");
-			opt.addArguments("--disable-dev-shm-usage");
-			driver=new ChromeDriver(opt);
-		}
-		else if(browserName.contains("Edge"))
-		{
-			 driver=new EdgeDriver();
-		}
-		driver.manage().window().maximize();
-		driver.get("https://opensource-demo.orangehrmlive.com/");
-		Assert.assertTrue(driver.getTitle().contains("Orange"), "Title does not match");
-		driver.quit();
-	}
-	
-	
+    driver.manage().window().maximize();
+    driver.get("https://opensource-demo.orangehrmlive.com/");
+    Assert.assertTrue(driver.getTitle().contains("Orange"), "Title does not match");
+    driver.quit();
 }
